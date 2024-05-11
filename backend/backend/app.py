@@ -1,10 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 
 
 from backend import commands
 from backend.extensions import db
-
 from backend.settings import Config as cfg
+from backend import views
 
 
 def create_app(config_object=cfg):
@@ -31,7 +31,7 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    pass
+    app.register_blueprint(views.bp)
 
 
 def register_commands(app):

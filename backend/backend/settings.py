@@ -20,3 +20,6 @@ class Config(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_ECHO = os.environ.get("SQLALCHEMY_ECHO", False)
+
+    FIREBASE_API_KEY = "apiKey"
+    FIREBASE_AUTH_DOMAIN = "projectId.firebaseapp.com"
