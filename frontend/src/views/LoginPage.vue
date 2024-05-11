@@ -43,6 +43,12 @@
         <v-col cols="12" class="text-center">
             <v-btn color="#3d52a0" class="white--text" style="text-transform: none;">Sign in</v-btn>
         </v-col>
+
+        <hr class="sign-in-or">
+        <v-col cols="12" class="text-center">
+            <v-btn color="#3d52a0"  style="text-transform: none;" text @click="onBoardUser()">Not a user ? Click here !</v-btn>
+        </v-col>
+
     </v-container>
     </v-container>
 </template>
@@ -55,6 +61,11 @@ export default {
       password: '',
       showPassword: false
     };
+  },
+  methods:{
+    onBoardUser(){
+        this.$router.replace('/onboarduser')
+    }
   }
 };
 </script>
@@ -74,5 +85,8 @@ export default {
 .money-gif{
     pointer-events: none;
 
+}
+.sign-in-or{
+    color: black;
 }
 </style>
