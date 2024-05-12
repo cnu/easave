@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 
 from backend.extensions import db
 from sqlalchemy import exc, MetaData, Numeric, ForeignKey
@@ -41,12 +42,15 @@ class Base:
                 return None
 
 
+@dataclass
 class User(db.Model, Base):
     __tablename__ = "users"
 
-    id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True)
-    uid = db.Column(db.String(50), unique=True)
-    email = db.Column(db.String(256), unique=True)
+    id: Mapped[int] = db.Column(
+        db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True
+    )
+    uid: Mapped[str] = db.Column(db.String(50), unique=True)
+    email: Mapped[str] = db.Column(db.String(256), unique=True)
 
     def __unicode__(self):
         return f"{self.uid} - {self.email}"
@@ -60,19 +64,22 @@ class User(db.Model, Base):
     }
 
 
+@dataclass
 class Business(db.Model, Base):
     __tablename__ = "businesses"
 
-    id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True)
-    name = db.Column(db.String(1024))
-    industry = db.Column(db.String(50))
-    pan = db.Column(db.String(10))
-    gstin = db.Column(db.String(15))
-    address = db.Column(db.String(1024))
-    savings = db.Column(db.Numeric(10, 2))
-    remaining_loan = db.Column(db.Numeric(10, 2))
+    id: Mapped[int] = db.Column(
+        db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True
+    )
+    name: Mapped[str] = db.Column(db.String(1024))
+    industry: Mapped[str] = db.Column(db.String(50))
+    pan: Mapped[str] = db.Column(db.String(10))
+    gstin: Mapped[str] = db.Column(db.String(15))
+    address: Mapped[str] = db.Column(db.String(1024))
+    savings: Mapped[float] = db.Column(db.Numeric(10, 2))
+    remaining_loan: Mapped[float] = db.Column(db.Numeric(10, 2))
     user_id = db.Column(db.BigInteger, db.ForeignKey("users.id"))
-    user = db.relationship("User", backref="businesses", lazy=True)
+    user: Mapped["User"] = db.relationship("User", backref="businesses", lazy=True)
 
     def __unicode__(self):
         return f"{self.id} - {self.name}"
@@ -83,13 +90,18 @@ class Business(db.Model, Base):
     meta = {"indexes": ["industry"]}
 
 
+@dataclass
 class Deposit(db.Model, Base):
     __tablename__ = "deposits"
 
-    id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True)
-    amount = db.Column(db.Numeric(10, 2))
+    id: Mapped[int] = db.Column(
+        db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True
+    )
+    amount: Mapped[float] = db.Column(db.Numeric(10, 2))
     business_id = db.Column(db.BigInteger, db.ForeignKey("businesses.id"))
-    business = db.relationship("Business", backref="deposits", lazy=True)
+    business: Mapped["Business"] = db.relationship(
+        "Business", backref="deposits", lazy=True
+    )
 
     def __unicode__(self):
         return f"{self.id} - {self.amount}"
@@ -98,14 +110,19 @@ class Deposit(db.Model, Base):
         return f"<Deposit {self.id} - {self.amount}"
 
 
+@dataclass
 class Loan(db.Model, Base):
     __tablename__ = "loans"
 
-    id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True)
-    amount = db.Column(db.Numeric(10, 2))
-    term = db.Column(db.Integer)  # months
+    id: Mapped[int] = db.Column(
+        db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True
+    )
+    amount: Mapped[float] = db.Column(db.Numeric(10, 2))
+    term: Mapped[int] = db.Column(db.Integer)  # months
     business_id = db.Column(db.BigInteger, db.ForeignKey("businesses.id"))
-    business = db.relationship("Business", backref="loans", lazy=True)
+    business: Mapped["Business"] = db.relationship(
+        "Business", backref="loans", lazy=True
+    )
 
     def __unicode__(self):
         return f"{self.id} - {self.amount}"

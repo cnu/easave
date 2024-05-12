@@ -65,6 +65,7 @@ def create_or_get_business():
         return jsonify(businesses)
     else:
         try:
+            user = User.query.filter_by(email=request.jwt_payload["email"]).first()
             name = request.json["name"]
             industry = request.json["industry"]
             pan = request.json["pan"]
@@ -76,6 +77,7 @@ def create_or_get_business():
                 pan=pan,
                 address=address,
                 gstin=gstin,
+                user_id=user.id,
             )
             business.save()
             return jsonify(business)
