@@ -92,7 +92,12 @@ def create_or_get_deposit():
     """Creates a new deposit for the user."""
     if request.method == "GET":
         business_id = request.json["business_id"]
-        deposits = Deposit.query.all(business_id=business_id)
+        # get deposits for a business sorted by created_at reverse
+        deposits = (
+            Deposit.query.filter_by(business_id=business_id)
+            .order_by(Deposit.created_at.desc())
+            .all()
+        )
         return jsonify(deposits)
     else:
         try:
@@ -111,14 +116,14 @@ def create_or_get_loan():
     """Creates a new loan for the user."""
     if request.method == "GET":
         business_id = request.json["business_id"]
-        loans = Loan.query.all(business_id=business_id)
+        loans = Loan.query.filter_by(business_id=business_id)
         return jsonify(loans)
     else:
         try:
             amount = request.json["amount"]
             business_id = request.json["business_id"]
             # check if business doesn't already have a loan
-            existing_loan = Loan.query.all(business_id=business_id)
+            existing_loan = Loan.query.filter_by(business_id=business_id).all()
             if existing_loan:
                 return {"error": "Business already has a loan."}
             loan = Loan(amount=amount, business_id=business_id)

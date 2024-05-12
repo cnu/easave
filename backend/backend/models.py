@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from datetime import datetime
 
 from backend.extensions import db
 from sqlalchemy import exc, MetaData, Numeric, ForeignKey
@@ -16,9 +17,6 @@ log = logging.getLogger(__name__)
 
 
 class Base:
-    created_at = db.Column(db.DateTime, default=db.func.now())
-    updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
-
     def save(self, commit=True):
         db.session.add(self)
         if commit:
@@ -51,6 +49,10 @@ class User(db.Model, Base):
     )
     uid: Mapped[str] = db.Column(db.String(50), unique=True)
     email: Mapped[str] = db.Column(db.String(256), unique=True)
+    created_at: Mapped[datetime] = db.Column(db.DateTime, default=db.func.now())
+    updated_at: Mapped[datetime] = db.Column(
+        db.DateTime, default=db.func.now(), onupdate=db.func.now()
+    )
 
     def __unicode__(self):
         return f"{self.uid} - {self.email}"
@@ -80,6 +82,10 @@ class Business(db.Model, Base):
     remaining_loan: Mapped[float] = db.Column(db.Numeric(10, 2))
     user_id = db.Column(db.BigInteger, db.ForeignKey("users.id"))
     user: Mapped["User"] = db.relationship("User", backref="businesses", lazy=True)
+    created_at: Mapped[datetime] = db.Column(db.DateTime, default=db.func.now())
+    updated_at: Mapped[datetime] = db.Column(
+        db.DateTime, default=db.func.now(), onupdate=db.func.now()
+    )
 
     def __unicode__(self):
         return f"{self.id} - {self.name}"
@@ -102,6 +108,10 @@ class Deposit(db.Model, Base):
     business: Mapped["Business"] = db.relationship(
         "Business", backref="deposits", lazy=True
     )
+    created_at: Mapped[datetime] = db.Column(db.DateTime, default=db.func.now())
+    updated_at: Mapped[datetime] = db.Column(
+        db.DateTime, default=db.func.now(), onupdate=db.func.now()
+    )
 
     def __unicode__(self):
         return f"{self.id} - {self.amount}"
@@ -122,6 +132,10 @@ class Loan(db.Model, Base):
     business_id = db.Column(db.BigInteger, db.ForeignKey("businesses.id"))
     business: Mapped["Business"] = db.relationship(
         "Business", backref="loans", lazy=True
+    )
+    created_at: Mapped[datetime] = db.Column(db.DateTime, default=db.func.now())
+    updated_at: Mapped[datetime] = db.Column(
+        db.DateTime, default=db.func.now(), onupdate=db.func.now()
     )
 
     def __unicode__(self):
