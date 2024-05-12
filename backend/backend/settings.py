@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from dotenv import load_dotenv
+from firebase_admin import credentials
 
 os_env = os.environ
 load_dotenv()
@@ -20,6 +21,6 @@ class Config(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_ECHO = os.environ.get("SQLALCHEMY_ECHO", False)
-
-    FIREBASE_API_KEY = "apiKey"
-    FIREBASE_AUTH_DOMAIN = "projectId.firebaseapp.com"
+    FIREBASE_ADMIN_CREDENTIAL = credentials.Certificate(
+        "hacktivators-7dc70-firebase-adminsdk-usjxb-bb924a8ab9.json"
+    )

@@ -11,12 +11,7 @@ from flask import (
 
 # from backend.extensions import db
 from backend.models import User, Business, Deposit, Loan
-
-from google.auth.transport import requests
-from google.cloud import datastore
-import google.oauth2.id_token
-
-import pyrebase
+from backend.extensions import firebase
 
 # firebase_request_adapter = requests.Request()
 bp = Blueprint("backend", __name__, url_prefix="/api")
@@ -25,6 +20,7 @@ log = logging.getLogger(__name__)
 
 
 @bp.route("/user/", methods=["POST"])
+@firebase.jwt_required
 def user_login():
     """Logs in a user or registers a new user.
 
@@ -43,28 +39,28 @@ def user_login():
     }
     """
     try:
-        id_token = request.json["idToken"]
-        # user_info = google.oauth2.id_token.verify_firebase_token(
-        #     id_token, firebase_request_adapter
-        # )
-
-        config = {
-            "apiKey": current_app.config.FIREBASE_API_KEY,
-            "authDomain": current_app.config.FIREBASE_AUTH_DOMAIN,
-        }
-
-        firebase = pyrebase.initialize_app(config)
-
-        auth = firebase.auth()
-        user_info = auth.get_account_info(id_token)
-        log.info(user_info)
-        return user_info
+        log.info(request.jwt_payload)
+        log.info(request.jwt_payload["email"])
+        user = User.query.filter_by(email=request.jwt_payload["email"]).first()
+        if user:
+            user.auth_token = request.jwt_payload["idToken"]
+            user.save()
+            return {"known": True}
+        else:
+            user = User(
+                email=request.jwt_payload["email"],
+                uid=request.jwt_payload["uid"],
+                auth_token=request.jwt_payload["idToken"],
+            )
+            user.save()
+            return {"known": False}
     except ValueError as e:
         error_message = str(e)
         return {"error": error_message}
 
 
 @bp.route("/business/", methods=["POST", "GET"])
+@firebase.jwt_required
 def create_or_get_business():
     """Creates a new business for the user."""
     if request.method == "GET":
@@ -122,3 +118,15 @@ def create_or_get_loan():
         except ValueError as e:
             error_message = str(e)
             return {"error": error_message}
+
+
+@bp.route("/loan/allowed/", methods=["GET"])
+def allowed_loan():
+    business_id = request.json["business_id"]
+    existing_loan = Loan.query.all(business_id=business_id)
+    if existing_loan:
+        return {"error": "Business already has a loan."}
+    else:
+        # calculate the allowed loan amount
+        pass
+    return {"allowed": 100_000}

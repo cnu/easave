@@ -80,8 +80,11 @@ class Business(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     industry: Mapped[str]
+    pan: Mapped[str]
+    gstin: Mapped[str]
+    address: Mapped[str]
     savings: Mapped[float] = mapped_column(Numeric(10, 2))
-    loan: Mapped[float] = mapped_column(Numeric(10, 2))
+    remaining_loan: Mapped[float] = mapped_column(Numeric(10, 2))
     user_id: Mapped[user_fk] = mapped_column(init=False)
     user: Mapped["User"] = relationship(back_populates="businesses", default=None)
 

@@ -17,7 +17,7 @@ ENV C_FORCE_ROOT="true"
 ENV SQLALCHEMY_DATABASE_URI="sqlite:///easave.sqlite3"
 
 RUN echo 'alias act="source env/bin/activate"' >> ~/.bashrc
-RUN echo 'alias ee="export FLASK_APP=run.py && export FLASK_DEBUG=0"' >> ~/.bashrc
+RUN echo 'alias ee="export FLASK_APP=wsgi.py && export FLASK_DEBUG=0"' >> ~/.bashrc
 
 CMD [ "uwsgi", "--http", "0.0.0.0:5000", \
                "--protocol", "uwsgi", \

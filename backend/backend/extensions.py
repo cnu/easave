@@ -3,5 +3,7 @@
 in app.py
 """
 from flask_sqlalchemy import SQLAlchemy
+from flask_firebase_admin import FirebaseAdmin
 
 db = SQLAlchemy()
+firebase = FirebaseAdmin()
