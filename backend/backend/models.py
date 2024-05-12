@@ -44,10 +44,9 @@ class Base:
 class User(db.Model, Base):
     __tablename__ = "users"
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True)
     uid = db.Column(db.String(50), unique=True)
     email = db.Column(db.String(256), unique=True)
-    auth_token = db.Column(db.String(1024))
 
     def __unicode__(self):
         return f"{self.uid} - {self.email}"
@@ -64,7 +63,7 @@ class User(db.Model, Base):
 class Business(db.Model, Base):
     __tablename__ = "businesses"
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True)
     name = db.Column(db.String(1024))
     industry = db.Column(db.String(50))
     pan = db.Column(db.String(10))
@@ -73,7 +72,7 @@ class Business(db.Model, Base):
     savings = db.Column(db.Numeric(10, 2))
     remaining_loan = db.Column(db.Numeric(10, 2))
     user_id = db.Column(db.BigInteger, db.ForeignKey("users.id"))
-    user = db.relationship("User", back_populates="businesses", lazy=True)
+    user = db.relationship("User", backref="businesses", lazy=True)
 
     def __unicode__(self):
         return f"{self.id} - {self.name}"
@@ -87,10 +86,10 @@ class Business(db.Model, Base):
 class Deposit(db.Model, Base):
     __tablename__ = "deposits"
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True)
     amount = db.Column(db.Numeric(10, 2))
     business_id = db.Column(db.BigInteger, db.ForeignKey("businesses.id"))
-    business = db.relationship("Business", back_populates="deposits", lazy=True)
+    business = db.relationship("Business", backref="deposits", lazy=True)
 
     def __unicode__(self):
         return f"{self.id} - {self.amount}"
@@ -102,11 +101,11 @@ class Deposit(db.Model, Base):
 class Loan(db.Model, Base):
     __tablename__ = "loans"
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.BigInteger().with_variant(db.Integer, "sqlite"), primary_key=True)
     amount = db.Column(db.Numeric(10, 2))
     term = db.Column(db.Integer)  # months
     business_id = db.Column(db.BigInteger, db.ForeignKey("businesses.id"))
-    business = db.relationship("Business", back_populates="loans", lazy=True)
+    business = db.relationship("Business", backref="loans", lazy=True)
 
     def __unicode__(self):
         return f"{self.id} - {self.amount}"

@@ -43,14 +43,11 @@ def user_login():
         log.info(request.jwt_payload["email"])
         user = User.query.filter_by(email=request.jwt_payload["email"]).first()
         if user:
-            user.auth_token = request.jwt_payload["idToken"]
-            user.save()
             return {"known": True}
         else:
             user = User(
                 email=request.jwt_payload["email"],
                 uid=request.jwt_payload["uid"],
-                auth_token=request.jwt_payload["idToken"],
             )
             user.save()
             return {"known": False}
