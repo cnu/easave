@@ -61,7 +61,7 @@ def user_login():
 def create_or_get_business():
     """Creates a new business for the user."""
     if request.method == "GET":
-        businesses = Business.query.all()  # TODO filter for logged in user's business
+        businesses = Business.query.filter_by(user_id=request.jwt_payload["uid"]).all()
         return jsonify(businesses)
     else:
         try:
