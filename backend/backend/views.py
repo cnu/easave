@@ -67,7 +67,16 @@ def create_or_get_business():
         try:
             name = request.json["name"]
             industry = request.json["industry"]
-            business = Business(name=name, industry=industry)
+            pan = request.json["pan"]
+            address = request.json["address"]
+            gstin = request.json["gstin"]
+            business = Business(
+                name=name,
+                industry=industry,
+                pan=pan,
+                address=address,
+                gstin=gstin,
+            )
             business.save()
             return jsonify(business)
         except ValueError as e:
