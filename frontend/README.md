@@ -1,4 +1,4 @@
-# chit_loan
+# easave
 
 ## Project setup
 ```
