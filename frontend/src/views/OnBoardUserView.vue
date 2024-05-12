@@ -9,7 +9,7 @@
                 <v-divider></v-divider>
 
                 <v-stepper-step editable step="2">
-                    KYC and Verfication
+                    Buisness  Information
                 </v-stepper-step>
 
                 <v-divider></v-divider>
@@ -17,24 +17,15 @@
                 <v-stepper-step step="3" editable>
                     Credit History
                 </v-stepper-step>
-                <v-divider></v-divider>
 
-                <v-stepper-step editable step="4">
-                    Savings and investments
-                </v-stepper-step>
-                <v-divider></v-divider>
-
-                <v-stepper-step editable step="5">
-                    Payments
-                </v-stepper-step>
             </v-stepper-header>
             <v-stepper-content step="1">
                 <p class="stepper-start-heading">Personal Information</p>
                 <personal-information></personal-information>
             </v-stepper-content>
             <v-stepper-content step="2">
-                <p class="stepper-start-heading">KYC and Verification</p>
-                <KYCVerification></KYCVerification>
+                <p class="stepper-start-heading">Buisness Information</p>
+                <BuisnessInformation></BuisnessInformation>
             </v-stepper-content>
             <v-stepper-content step="3">
                 <p class="stepper-start-heading">Credit History</p>
@@ -46,7 +37,8 @@
 <script>
 import rules from "@/utils/rules";
 import PersonalInformation from '@/components/PersonalInformation.vue'
-import KYCVerification from '@/components/KYCVerification.vue'
+// import KYCVerification from '@/components/KYCVerification.vue'
+import BuisnessInformation from '@/components/BuisnessInformation.vue'
 import CreditHistory from '@/components/CreditHistory.vue'
 
 export default {
@@ -60,8 +52,9 @@ export default {
     },
     components:{
         PersonalInformation,
-        KYCVerification,
-        CreditHistory
+        // KYCVerification,
+        CreditHistory,
+        BuisnessInformation
     }
 }
 </script>
@@ -76,5 +69,10 @@ export default {
     font-size: 25px;
     font-weight: 700;
     text-align: center;
+}
+.currency-words{
+    font-size: 15px;
+    font-weight: 700;
+    opacity: 0.5;
 }
 </style>

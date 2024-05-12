@@ -4,6 +4,8 @@
       <v-container>
         <v-row justify="center" no-gutters>
           <v-col cols="12">
+        <ErrorDialog></ErrorDialog>
+
             <!-- Your content goes here -->
             <v-card flat color="#EDE8F5" height="95vh" class="rounded-lg" style="overflow: scroll;">
               <keep-alive>
@@ -19,13 +21,16 @@
 </template>
 
 <script>
-
+import ErrorDialog from '@/uiComponents/ErrorDialog.vue'
 export default {
   name: "App",
   data() {
     return {
    
     }
+  },
+  components:{
+    ErrorDialog,
   },
   mounted() {
 

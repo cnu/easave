@@ -5,7 +5,7 @@
                             Aadhar 
                         </v-col>
                         <v-col cols="12" class="pb-10">
-                            <v-text-field hide-details="auto" class="login-text-field" flat outlined dense solo
+                            <v-text-field hide-details="auto" class="login-text-field" flat outlined dense solo onKeyPress="return ( event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57) && this.value.length <12) ? true :false   " :max-length="12" :min="12"
                                 label="112321231234" :rules="[rules.isRequired]"></v-text-field>
                         </v-col>
                     </v-row>
@@ -14,7 +14,7 @@
                             PAN
                         </v-col>
                         <v-col cols="12" class="pb-10">
-                            <v-text-field hide-details="auto" class="login-text-field" flat outlined dense solo
+                            <v-text-field hide-details="auto" class="login-text-field" flat outlined dense solo max="10" min="10"
                                 label="ABCTY1234D" :rules="[rules.isRequired]"></v-text-field>
                         </v-col>
                     </v-row>

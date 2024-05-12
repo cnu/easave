@@ -5,18 +5,22 @@
             <v-col cols="12" class="text-left pb-3 stepper-subheadings">
                 Amount of loan
             </v-col>
-            <v-col cols="12" class="pb-10">
+            <v-col cols="12" class="pb-4">
              <v-text-field hide-details="auto" class="login-text-field"  v-model="currencyValue"
           label="Enter Amount"
+          onKeyPress="return ( event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57) && this.value.length < 11) ? true :false   " 
           @input="formatCurrency" flat outlined dense solo
                     :rules="[rules.isRequired]"></v-text-field>
             </v-col>
+            <v-col cols="12" class="pb-10 pl-2 currency-words" v-if="currencyIntoWords!='Zero'">
+                <span>{{ currencyIntoWords + ' Rupees' }}</span>
+             </v-col>
         </v-row>
         <v-row no-gutters>
             <v-col cols="12" class="text-left pb-3 stepper-subheadings">
                 How Many Months Remaining ?
             </v-col>
-            <v-col cols="12" class="pb-10 pl-2 pt-6">
+            <v-col cols="12" class="pb-10 px-2 pt-6">
                 <v-slider
                 :thumb-size="24"
           thumb-label="always"
@@ -34,7 +38,7 @@
                             How many previous missed payments? 
                         </v-col>
                         <v-col cols="12" class="pb-10">
-                            <v-text-field hide-details="auto" class="login-text-field" type="number" flat outlined dense solo
+                            <v-text-field hide-details="auto" class="login-text-field" onKeyPress="return ( event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57) && this.value.length < 2) ? true :false   " flat outlined dense solo
                                  :rules="[rules.isRequired]"></v-text-field>
                         </v-col>
                     </v-row>
@@ -45,6 +49,7 @@
     </v-container>
 </template>
 <script>
+import numberToText from 'number2text'
 import rules from "@/utils/rules";
 export default {
   data() {
@@ -53,6 +58,12 @@ export default {
       currencyValue: '',
       rules: rules,
     };
+  },
+  computed:{
+    currencyIntoWords(){
+
+        return numberToText(this.currencyValue.replace(/[^\w\s]/gi, ''))
+    },
   },
   methods: {
     formatCurrency() {
