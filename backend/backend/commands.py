@@ -8,6 +8,7 @@ from flask import Flask
 from flask.cli import with_appcontext
 
 from backend.extensions import db
+from backend.models import User, Business, Deposit, Loan
 
 app = Flask(__name__)
 

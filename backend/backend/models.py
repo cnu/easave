@@ -14,19 +14,9 @@ from typing_extensions import Annotated
 log = logging.getLogger(__name__)
 
 
-class Base(DeclarativeBase, MappedAsDataclass):
+class Base:
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
-
-    metadata = MetaData(
-        naming_convention={
-            "ix": "ix_%(column_0_label)s",
-            "uq": "uq_%(table_name)s_%(column_0_name)s",
-            "ck": "ck_%(table_name)s_%(constraint_name)s",
-            "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-            "pk": "pk_%(table_name)s",
-        }
-    )
 
     def save(self, commit=True):
         db.session.add(self)
@@ -51,13 +41,13 @@ class Base(DeclarativeBase, MappedAsDataclass):
                 return None
 
 
-class User(Base):
+class User(db.Model, Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    uid: Mapped[str] = mapped_column(unique=True)
-    email: Mapped[str] = mapped_column(unique=True)
-    auth_token: Mapped[str]
+    id = db.Column(db.BigInteger, primary_key=True)
+    uid = db.Column(db.String(50), unique=True)
+    email = db.Column(db.String(256), unique=True)
+    auth_token = db.Column(db.String(1024))
 
     def __unicode__(self):
         return f"{self.uid} - {self.email}"
@@ -71,22 +61,19 @@ class User(Base):
     }
 
 
-user_fk = Annotated[int, mapped_column(ForeignKey("users.id"))]
-
-
-class Business(Base):
+class Business(db.Model, Base):
     __tablename__ = "businesses"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-    industry: Mapped[str]
-    pan: Mapped[str]
-    gstin: Mapped[str]
-    address: Mapped[str]
-    savings: Mapped[float] = mapped_column(Numeric(10, 2))
-    remaining_loan: Mapped[float] = mapped_column(Numeric(10, 2))
-    user_id: Mapped[user_fk] = mapped_column(init=False)
-    user: Mapped["User"] = relationship(back_populates="businesses", default=None)
+    id = db.Column(db.BigInteger, primary_key=True)
+    name = db.Column(db.String(1024))
+    industry = db.Column(db.String(50))
+    pan = db.Column(db.String(10))
+    gstin = db.Column(db.String(15))
+    address = db.Column(db.String(1024))
+    savings = db.Column(db.Numeric(10, 2))
+    remaining_loan = db.Column(db.Numeric(10, 2))
+    user_id = db.Column(db.BigInteger, db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="businesses", lazy=True)
 
     def __unicode__(self):
         return f"{self.id} - {self.name}"
@@ -97,16 +84,13 @@ class Business(Base):
     meta = {"indexes": ["industry"]}
 
 
-business_fk = Annotated[int, mapped_column(ForeignKey("businesses.id"))]
-
-
-class Deposit(Base):
+class Deposit(db.Model, Base):
     __tablename__ = "deposits"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    amount: Mapped[float] = mapped_column(Numeric(10, 2))
-    business_id: Mapped[business_fk] = mapped_column(init=False)
-    business: Mapped["Business"] = relationship(back_populates="deposits", default=None)
+    id = db.Column(db.BigInteger, primary_key=True)
+    amount = db.Column(db.Numeric(10, 2))
+    business_id = db.Column(db.BigInteger, db.ForeignKey("businesses.id"))
+    business = db.relationship("Business", back_populates="deposits", lazy=True)
 
     def __unicode__(self):
         return f"{self.id} - {self.amount}"
@@ -115,14 +99,14 @@ class Deposit(Base):
         return f"<Deposit {self.id} - {self.amount}"
 
 
-class Loan(Base):
+class Loan(db.Model, Base):
     __tablename__ = "loans"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    amount: Mapped[float] = mapped_column(Numeric(10, 2))
-    term: Mapped[int]  # months
-    business_id: Mapped[business_fk] = mapped_column(init=False)
-    business: Mapped["Business"] = relationship(back_populates="deposits", default=None)
+    id = db.Column(db.BigInteger, primary_key=True)
+    amount = db.Column(db.Numeric(10, 2))
+    term = db.Column(db.Integer)  # months
+    business_id = db.Column(db.BigInteger, db.ForeignKey("businesses.id"))
+    business = db.relationship("Business", back_populates="loans", lazy=True)
 
     def __unicode__(self):
         return f"{self.id} - {self.amount}"
